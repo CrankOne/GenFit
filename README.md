@@ -20,3 +20,8 @@ GenFit is an experiment-independent framework for track reconstruction for parti
 GenFit has been developed in the framework of the PANDA experiment at FAIR, Darmstadt, Germany. It is also used in the Belle-2, Fopi, and GEM-TPC experiments.
 
 GenFit Homepage: (https://github.com/GenFit/GenFit)
+
+## Note about this fork
+
+The [CrankOne's fork](https://github.com/CrankOne/GenFit) introduces a minor contribution with CMake-config module.
+

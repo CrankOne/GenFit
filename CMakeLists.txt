@@ -12,11 +12,42 @@ SET( ${PROJECT_NAME}_VERSION_MAJOR 2 )
 SET( ${PROJECT_NAME}_VERSION_MINOR 0 )
 SET( ${PROJECT_NAME}_VERSION_PATCH 0 )
 
+# CMake provides a flexible mechanism to specialize installation prefix path
+# which will be appended to any installed target upon `$ make install' is
+# invoked. It is done via the CMAKE_INSTALL_PREFIX variable that can be set
+# from command line.
+# However, the GenFit team preferred manual set for includes and libs
+# via LIBRARY_OUTPUT_DIRECTORY and INCLUDE_OUTPUT_DIRECTORY (see a block
+# below). We should keep both ways of specification:
+IF( NOT CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
+    MESSAGE( STATUS "NOTE: Install prefix is manually set to \""
+        ${CMAKE_INSTALL_PREFIX} "\"." )
+    # ...
+    SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
+    SET(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/lib/genfit")
+    SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+    IF(DEFINED LIBRARY_OUTPUT_DIRECTORY)
+        MESSAGE( "Both, the LIBRARY_OUTPUT_DIRECTORY and CMAKE_INSTALL_PREFIX "
+                 "variables are specified. The former will be used.")
+    ENDIF(DEFINED LIBRARY_OUTPUT_DIRECTORY)
+    SET( LIBRARY_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX}/lib/genfit )
+    IF(DEFINED INCLUDE_OUTPUT_DIRECTORY)
+        MESSAGE( "Both, the INCLUDE_OUTPUT_DIRECTORY and CMAKE_INSTALL_PREFIX "
+                 "variables are specified. The former will be used.")
+    ENDIF(DEFINED INCLUDE_OUTPUT_DIRECTORY)
+    SET( INCLUDE_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX}/include/genfit )
+
+    # the RPATH to be used when installing, but only if it's not a system directory
+    LIST(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES
+        "${CMAKE_INSTALL_PREFIX}/lib/genfit" isSystemDir)
+endif( NOT CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
 # install destinations can be passed via the command line:
 # cmake -DLIBRARY_OUTPUT_DIRECTORY:PATH=.... -DINCLUDE_OUTPUT_DIRECTORY:PATH=....
 # otherwise, set default install destinations
 IF(NOT DEFINED LIBRARY_OUTPUT_DIRECTORY)
 	set( LIBRARY_OUTPUT_DIRECTORY ./lib )
+    # todo: shall we append -rpath here?
 ENDIF()
 IF(NOT DEFINED INCLUDE_OUTPUT_DIRECTORY)
 	set( INCLUDE_OUTPUT_DIRECTORY ./include )
@@ -151,6 +182,7 @@ if(DOXYGEN_FOUND)
         ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/doc/Doxyfile
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/doc
         COMMENT "Generating API documentation with Doxygen" VERBATIM)
+    # TODO: install target to CMAKE_INSTALL_PREFIX to share/doc/genfit dir
 ELSE()
     MESSAGE( STATUS "Doxygen not installed or found -- API documentation can't be generated!" )
 ENDIF(DOXYGEN_FOUND)
