@@ -23,3 +23,4 @@ a.out.*
 CMakeCache.txt
 CMakeFiles
 **/Linux/*
+cmake/genfit-config.cmake

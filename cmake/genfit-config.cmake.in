@@ -1,0 +1,35 @@
+# Note that variables prefix defined in this config file does not contain
+# versioning number --- i.e. we're using here `genfit_' instead of `genfit2_'
+# that one could expect according to CMakeLists.txt. The -config.cmake files
+# have not to be dependent of particular package API version.
+#
+# CMake config file for genfit2 package
+# - Defines the following variables
+#  genfit_INCLUDE_DIRS      - include directories
+#  genfit_LIBRARIES         - libraries
+#  genfit_LIBRARY_DIR       - Where genfit2 libraries is to be placed
+#  genfit_CC                - genfit C compiler
+#  genfit_C_CFLAGS          - genfit C compiler flags
+#  genfit_CXX               - genfit C++ compiler
+#  genfit_CXX_CFLAGS        - genfit C++ compiler flags
+#  genfit_INSTALL_PREFIX    - genfit basic installation path
+# to be defined:
+#  genfit_EXECUTABLE        - the Goo unit tests executable
+
+SET( genfit_VERSION_MAJOR @genfit2_VERSION_MAJOR@ )
+SET( genfit_VERSION_MINOR @genfit2_VERSION_MINOR@ )
+SET( genfit_VERSION_PATCH @genfit2_VERSION_PATCH@ )
+set( genfit_VERSION ${genfit_VERSION_MAJOR}.${genfit_VERSION_MINOR}.${genfit_VERSION_PATCH} )
+
+set( genfit_INCLUDE_DIRS   @INCLUDE_OUTPUT_DIRECTORY@ )
+set( genfit_LIBRARIES      @PROJECT_NAME@ )
+set( genfit_LIBRARY_DIR    @LIBRARY_OUTPUT_DIRECTORY@ )
+set( genfit_INSTALL_PREFIX @CMAKE_INSTALL_PREFIX@ )
+
+set( genfit_CC             "@CMAKE_C_COMPILER@" )
+set( genfit_C_CFLAGS       "@CMAKE_C_FLAGS@"   )
+
+set( genfit_CXX            "@CMAKE_CXX_COMPILER@" )
+set( genfit_CXX_CFLAGS     "@CMAKE_CXX_FLAGS@" )
+
+

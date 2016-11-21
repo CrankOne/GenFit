@@ -410,4 +410,10 @@ if(DEFINED RAVE)
 endif()
 
 # generate and install following configuration files
-#GENERATE_PACKAGE_CONFIGURATION_FILES( genfitConfig.cmake genfitConfigVersion.cmake )
+configure_file (
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/genfit-config.cmake.in"
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/genfit-config.cmake"
+)
+# install generate CMake-config file to lib dir
+install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/cmake/genfit-config.cmake"
+        DESTINATION ${LIBRARY_OUTPUT_DIRECTORY} )
