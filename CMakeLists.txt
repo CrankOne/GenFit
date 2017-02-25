@@ -410,8 +410,9 @@ endif()
 # generate and install following configuration files
 configure_file (
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/genfit-config.cmake.in"
-    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/genfit-config.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake/genfit-config.cmake"
 )
 # install generate CMake-config file to lib dir
-install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/cmake/genfit-config.cmake"
-    DESTINATION lib/cmake/GenFit${${PROJECT_NAME}_VERSION_MAJOR} )
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake/genfit-config.cmake"
+    DESTINATION ${LIBRARY_OUTPUT_DIRECTORY} )
