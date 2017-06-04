@@ -23,6 +23,7 @@ MACRO( ADD_SHARED_LIBRARY _name )
         # create *nix style library versions + symbolic links
         VERSION ${${PROJECT_NAME}_VERSION}
         SOVERSION ${${PROJECT_NAME}_SOVERSION}
+        INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/lib/genfit
     )
 ENDMACRO( ADD_SHARED_LIBRARY )
 
@@ -37,7 +38,8 @@ MACRO( GENERATE_PACKAGE_CONFIGURATION_FILES )
                 CONFIGURE_FILE( "${PROJECT_SOURCE_DIR}/cmake/${arg}.in"
                                 "${PROJECT_BINARY_DIR}/${arg}" @ONLY
                 )
-                INSTALL( FILES "${PROJECT_BINARY_DIR}/${arg}" DESTINATION . )
+                INSTALL( FILES "${PROJECT_BINARY_DIR}/${arg}"
+                         DESTINATION lib/cmake/genfit )
              ENDIF()
         ENDIF()
 
@@ -48,13 +50,17 @@ MACRO( GENERATE_PACKAGE_CONFIGURATION_FILES )
                 CONFIGURE_FILE( "${PROJECT_SOURCE_DIR}/cmake/${arg}.in"
                                 "${PROJECT_BINARY_DIR}/${arg}" @ONLY
                 )
-                INSTALL( FILES "${PROJECT_BINARY_DIR}/${arg}" DESTINATION . )
+                INSTALL( FILES "${PROJECT_BINARY_DIR}/${arg}"
+                         DESTINATION . )
             ENDIF( EXISTS "${PROJECT_SOURCE_DIR}/cmake/${arg}.in" )
         ENDIF()
 
+        # Note: using of EXPORT_LIBRARY_DEPENDENCIES is disallowed in favor of
+        # install(EXPORT) / export() command. See CMP0033.
         IF( ${arg} MATCHES "LibDeps.cmake" )
             EXPORT_LIBRARY_DEPENDENCIES( "${arg}" )
-            INSTALL( FILES "${PROJECT_BINARY_DIR}/${arg}" DESTINATION lib/cmake )
+            INSTALL( FILES "${PROJECT_BINARY_DIR}/${arg}"
+                     DESTINATION lib/cmake/genfit )
         ENDIF()
 
     ENDFOREACH()

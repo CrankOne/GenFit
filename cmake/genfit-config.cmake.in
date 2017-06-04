@@ -14,7 +14,11 @@
 #  genfit_CXX_CFLAGS        - genfit C++ compiler flags
 #  genfit_INSTALL_PREFIX    - genfit basic installation path
 # to be defined:
-#  genfit_EXECUTABLE        - the Goo unit tests executable
+#  genfit_EXECUTABLE        - the GenFit unit tests executable
+
+#  Compute the installation prefix relative to this file.
+get_filename_component(_CURRENT_LOCATION "${CMAKE_CURRENT_LIST_FILE}" PATH)
+include( ${_CURRENT_LOCATION}/genfitTargets.cmake )
 
 SET( genfit_VERSION_MAJOR @genfit2_VERSION_MAJOR@ )
 SET( genfit_VERSION_MINOR @genfit2_VERSION_MINOR@ )

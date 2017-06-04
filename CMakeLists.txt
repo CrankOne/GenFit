@@ -28,12 +28,12 @@ IF( NOT CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
     SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
     IF(DEFINED LIBRARY_OUTPUT_DIRECTORY)
-        MESSAGE( "Both, the LIBRARY_OUTPUT_DIRECTORY and CMAKE_INSTALL_PREFIX "
+        MESSAGE( WARNING "Both, the LIBRARY_OUTPUT_DIRECTORY and CMAKE_INSTALL_PREFIX "
                  "variables are specified. The former will be used.")
     ENDIF(DEFINED LIBRARY_OUTPUT_DIRECTORY)
     SET( LIBRARY_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX}/lib/genfit )
     IF(DEFINED INCLUDE_OUTPUT_DIRECTORY)
-        MESSAGE( "Both, the INCLUDE_OUTPUT_DIRECTORY and CMAKE_INSTALL_PREFIX "
+        MESSAGE( WARNING "Both, the INCLUDE_OUTPUT_DIRECTORY and CMAKE_INSTALL_PREFIX "
                  "variables are specified. The former will be used.")
     ENDIF(DEFINED INCLUDE_OUTPUT_DIRECTORY)
     SET( INCLUDE_OUTPUT_DIRECTORY ${CMAKE_INSTALL_PREFIX}/include/genfit )
@@ -47,10 +47,13 @@ endif( NOT CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT )
 # otherwise, set default install destinations
 IF(NOT DEFINED LIBRARY_OUTPUT_DIRECTORY)
 	set( LIBRARY_OUTPUT_DIRECTORY ./lib )
-    # todo: shall we append -rpath here?
+    # ^^^ Note: using of leading dot in install path is disallowed by CMake
+    # maintainers since causes erroneous path generation.
 ENDIF()
 IF(NOT DEFINED INCLUDE_OUTPUT_DIRECTORY)
 	set( INCLUDE_OUTPUT_DIRECTORY ./include )
+    # ^^^ Note: using of leading dot in install path is disallowed by CMake
+    # maintainers since causes erroneous path generation.
 ENDIF()
 
 # define path to macros and settings
@@ -370,7 +373,7 @@ endif()
 
 # install
 ADD_SHARED_LIBRARY( ${PROJECT_NAME} ${library_sources})
-INSTALL( TARGETS ${PROJECT_NAME} 
+INSTALL( TARGETS ${PROJECT_NAME} EXPORT genfit
 	LIBRARY DESTINATION ${LIBRARY_OUTPUT_DIRECTORY}
 )
 
@@ -407,12 +410,28 @@ if(DEFINED RAVE)
   ADD_GENFIT_TEST( vertexingTestRead       test/vertexingTest/read.cc)
 endif()
 
+
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file(
+    "${CMAKE_CURRENT_BINARY_DIR}/genfitConfigVersion.cmake"
+    VERSION ${${PROJECT_NAME}_VERSION_MAJOR}.${${PROJECT_NAME}_VERSION_MINOR}.${${PROJECT_NAME}_VERSION_PATCH}
+    COMPATIBILITY AnyNewerVersion )
+export( EXPORT genfit
+  FILE "${CMAKE_CURRENT_BINARY_DIR}/genfitTargets.cmake"
+)
 # generate and install following configuration files
 configure_file (
     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/genfit-config.cmake.in"
     "${CMAKE_CURRENT_BINARY_DIR}/cmake/genfit-config.cmake"
+    @ONLY
 )
 # install generate CMake-config file to lib dir
 install(FILES
     "${CMAKE_CURRENT_BINARY_DIR}/cmake/genfit-config.cmake"
-    DESTINATION ${LIBRARY_OUTPUT_DIRECTORY} )
+    "${CMAKE_CURRENT_BINARY_DIR}/genfitTargets.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/genfitConfigVersion.cmake"
+    DESTINATION lib/cmake/genfit )
+
+install( EXPORT genfit DESTINATION lib/cmake/genfit
+    FILE genfitTargets.cmake )
+
